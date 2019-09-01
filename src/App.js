@@ -3,6 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 
 import myWorker from './worker/file.worker.js';
+import aWorker from './worker/a.worker.js';
+import bWorker from './worker/b.worker.js';
+
 
 
 
@@ -14,11 +17,16 @@ class App extends Component {
 
   componentDidMount() {
     const worker = new myWorker();
-    worker.postMessage('123');
-    worker.onmessage = function (event) {};
-    worker.addEventListener('message', event => {
-      console.log(event.data)
-    });
+    worker.postMessage({b:1});
+    worker.onmessage = function (event) {console.log('onmessage', event.data);};
+
+    const a = new aWorker()
+    a.postMessage({})
+    // b.postMessage({})
+    for(let i =0;i<10;i++) {
+      let w = new aWorker()
+      w.postMessage(i)
+    }
   }
 
   render() {
