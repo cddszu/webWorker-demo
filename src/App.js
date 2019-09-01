@@ -4,7 +4,7 @@ import './App.css';
 
 import myWorker from './worker/file.worker.js';
 import aWorker from './worker/a.worker.js';
-import bWorker from './worker/b.worker.js';
+import {recurFib} from './utils/index'
 
 
 
@@ -19,14 +19,16 @@ class App extends Component {
     const worker = new myWorker();
     worker.postMessage({b:1});
     worker.onmessage = function (event) {console.log('onmessage', event.data);};
-
-    const a = new aWorker()
-    a.postMessage({})
-    // b.postMessage({})
-    for(let i =0;i<10;i++) {
-      let w = new aWorker()
-      w.postMessage(i)
-    }
+    console.time('recurFibMain')
+    recurFib(20)
+    console.timeEnd('recurFibMain')
+    // const a = new aWorker()
+    // a.postMessage({})
+    // // b.postMessage({})
+    // for(let i =0;i<10;i++) {
+    //   let w = new aWorker()
+    //   w.postMessage(i)
+    // }
   }
 
   render() {
