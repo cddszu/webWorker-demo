@@ -11,43 +11,40 @@ import {recurFib} from './utils/index'
 
 class App extends Component {
   constructor() {
-    super();
-    this.state = {counter: 0};
+    super()
+    this.state = {counter: 0, number: 0, result: ''}
+    this.postMessageToWorker = this.postMessageToWorker.bind(this)
+    this.inputChange = this.inputChange.bind(this)
   }
 
   componentDidMount() {
-    const worker = new myWorker();
-    worker.postMessage({b:1});
-    worker.onmessage = function (event) {console.log('onmessage', event.data);};
-    console.time('recurFibMain')
-    recurFib(20)
-    console.timeEnd('recurFibMain')
-    // const a = new aWorker()
-    // a.postMessage({})
-    // // b.postMessage({})
-    // for(let i =0;i<10;i++) {
-    //   let w = new aWorker()
-    //   w.postMessage(i)
-    // }
+    const _this = this
+    this.worker = new myWorker();
+    
+    this.worker.onmessage = function (event) {
+      _this.setState({
+        result: event.data
+      })
+    };
+  }
+  postMessageToWorker() {
+    this.worker.postMessage(this.state.number);
+  }
+  inputChange(e) {
+    let value =  e.target.value
+    let number = value.replace(/[^0-9]/g,'')
+    this.setState({
+      number: parseInt(number || 0)
+    })
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <input type="text" onChange={this.inputChange} value={this.state.number}/>
+
+        <button onClick={this.postMessageToWorker} className='worker'>向worker发送斐波那契数列计算</button>
+        <p>{this.state.result}</p>
       </div>
     );
   }
